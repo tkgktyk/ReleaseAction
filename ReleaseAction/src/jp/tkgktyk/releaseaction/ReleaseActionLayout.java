@@ -54,7 +54,7 @@ public class ReleaseActionLayout extends FrameLayout {
 
 	private Rect mChildRect;
 
-	private int mActionFlag;
+	private Flag mActionFlag;
 	public static final int ACTION_LEFT = 0x01;
 	public static final int ACTION_TOP = 0x02;
 	public static final int ACTION_RIGHT = 0x04;
@@ -67,6 +67,7 @@ public class ReleaseActionLayout extends FrameLayout {
 	private void initialize() {
 		mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
 		mChildRect = new Rect();
+		mActionFlag = new Flag();
 		initializeAroundView();
 	}
 
@@ -169,13 +170,21 @@ public class ReleaseActionLayout extends FrameLayout {
 			final int deltaX = x - mLastMotionX;
 			final int y = (int) ev.getY(pointerIndex);
 			final int deltaY = y - mLastMotionY;
-			if (mEnableTouchEventX && (Math.abs(deltaX) > mTouchSlop)
-					&& !canChildScrollHorizontally(-deltaX)) {
-				isBeingDraggedX = true;
+			if (mEnableTouchEventX && (Math.abs(deltaX) > mTouchSlop)) {
+				if (canChildScrollHorizontally(-deltaX)) {
+					getTargetView().getParent()
+							.requestDisallowInterceptTouchEvent(true);
+				} else {
+					isBeingDraggedX = true;
+				}
 			}
-			if (mEnableTouchEventY && (Math.abs(deltaY) > mTouchSlop)
-					&& !canChildScrollVertically(-deltaY)) {
-				isBeingDraggedY = true;
+			if (mEnableTouchEventY && (Math.abs(deltaY) > mTouchSlop)) {
+				if (canChildScrollVertically(-deltaY)) {
+					getTargetView().getParent()
+							.requestDisallowInterceptTouchEvent(true);
+				} else {
+					isBeingDraggedY = true;
+				}
 			}
 			if (isBeingDraggedX || isBeingDraggedY) {
 				final ViewParent parent = getParent();
@@ -251,13 +260,21 @@ public class ReleaseActionLayout extends FrameLayout {
 			if (!mIsBeingDragged) {
 				boolean isBeingDraggedX = false;
 				boolean isBeingDraggedY = false;
-				if (mEnableTouchEventX && (Math.abs(deltaX) > mTouchSlop)
-						&& !canChildScrollHorizontally(-deltaX)) {
-					isBeingDraggedX = true;
+				if (mEnableTouchEventX && (Math.abs(deltaX) > mTouchSlop)) {
+					if (canChildScrollHorizontally(-deltaX)) {
+						getTargetView().getParent()
+								.requestDisallowInterceptTouchEvent(true);
+					} else {
+						isBeingDraggedX = true;
+					}
 				}
-				if (mEnableTouchEventY && (Math.abs(deltaY) > mTouchSlop)
-						&& !canChildScrollVertically(-deltaY)) {
-					isBeingDraggedY = true;
+				if (mEnableTouchEventY && (Math.abs(deltaY) > mTouchSlop)) {
+					if (canChildScrollVertically(-deltaY)) {
+						getTargetView().getParent()
+								.requestDisallowInterceptTouchEvent(true);
+					} else {
+						isBeingDraggedY = true;
+					}
 				}
 				if (isBeingDraggedX || isBeingDraggedY) {
 					final ViewParent parent = getParent();
@@ -482,10 +499,14 @@ public class ReleaseActionLayout extends FrameLayout {
 					mChildRect.offset(0, -child.getMeasuredHeight());
 					break;
 				case RIGHT:
-					mChildRect.offset(getWidth(), 0);
+					// mChildRect.offset(parentRight, 0);
+					// why need offset by padding?
+					mChildRect.offset(parentRight - getPaddingRight(), 0);
 					break;
 				case BOTTOM:
-					mChildRect.offset(0, getHeight());
+					// mChildRect.offset(0, parentBottom);
+					// why need offset by padding?
+					mChildRect.offset(0, parentBottom - getPaddingBottom());
 					break;
 				}
 				child.layout(mChildRect.left, mChildRect.top, mChildRect.right,
@@ -532,65 +553,72 @@ public class ReleaseActionLayout extends FrameLayout {
 				mAroundViews.get(location), getAction(location));
 	}
 
+	private static final float SPEED = 0.5f;
+
 	private void move(int deltaX, int deltaY, boolean animation) {
+		moveWithoutSpeed((int) (deltaX * SPEED), (int) (deltaY * SPEED),
+				animation);
+	}
+
+	private void moveWithoutSpeed(int deltaX, int deltaY, boolean animation) {
 		// horizontal
 		int newX = mOffsetX + deltaX;
 		// for LEFT
-		int maxX = valid(LEFT) ? 2 * getLeftView().getWidth() : 0;
+		int maxX = valid(LEFT) ? getLeftView().getWidth() : 0;
 		if (newX >= maxX) {
 			newX = maxX;
 			if (newX != 0) {
-				if ((mActionFlag & ACTION_LEFT) == 0) {
-					mActionFlag |= ACTION_LEFT;
+				if (!mActionFlag.has(ACTION_LEFT)) {
+					mActionFlag.add(ACTION_LEFT);
 					onActionEnabled(LEFT);
 				}
 			}
-		} else if ((mActionFlag & ACTION_LEFT) > 0) {
-			mActionFlag &= ~ACTION_LEFT;
+		} else if (mActionFlag.has(ACTION_LEFT)) {
+			mActionFlag.remove(ACTION_LEFT);
 			onActionDisabled(LEFT);
 		}
 		// for RIGHT
-		int minX = valid(RIGHT) ? -2 * getRightView().getWidth() : 0;
+		int minX = valid(RIGHT) ? -getRightView().getWidth() : 0;
 		if (newX <= minX) {
 			newX = minX;
 			if (newX != 0) {
-				if ((mActionFlag & ACTION_RIGHT) == 0) {
-					mActionFlag |= ACTION_RIGHT;
+				if (!mActionFlag.has(ACTION_RIGHT)) {
+					mActionFlag.add(ACTION_RIGHT);
 					onActionEnabled(RIGHT);
 				}
 			}
-		} else if ((mActionFlag & ACTION_RIGHT) > 0) {
-			mActionFlag &= ~ACTION_RIGHT;
+		} else if (mActionFlag.has(ACTION_RIGHT)) {
+			mActionFlag.remove(ACTION_RIGHT);
 			onActionDisabled(RIGHT);
 		}
 		// vertically
 		int newY = mOffsetY + deltaY;
 		// for TOP
-		int maxY = valid(TOP) ? 2 * getTopView().getHeight() : 0;
+		int maxY = valid(TOP) ? getTopView().getHeight() : 0;
 		if (newY >= maxY) {
 			newY = maxY;
 			if (newY != 0) {
-				if ((mActionFlag & ACTION_TOP) == 0) {
-					mActionFlag |= ACTION_TOP;
+				if (!mActionFlag.has(ACTION_TOP)) {
+					mActionFlag.add(ACTION_TOP);
 					onActionEnabled(TOP);
 				}
 			}
-		} else if ((mActionFlag & ACTION_TOP) > 0) {
-			mActionFlag &= ~ACTION_TOP;
+		} else if (mActionFlag.has(ACTION_TOP)) {
+			mActionFlag.remove(ACTION_TOP);
 			onActionDisabled(TOP);
 		}
 		// for BOTTOM
-		int minY = valid(BOTTOM) ? -2 * getBottomView().getHeight() : 0;
+		int minY = valid(BOTTOM) ? -getBottomView().getHeight() : 0;
 		if (newY <= minY) {
 			newY = minY;
 			if (newY != 0) {
-				if ((mActionFlag & ACTION_BOTTOM) == 0) {
-					mActionFlag |= ACTION_BOTTOM;
+				if (!mActionFlag.has(ACTION_BOTTOM)) {
+					mActionFlag.add(ACTION_BOTTOM);
 					onActionEnabled(BOTTOM);
 				}
 			}
-		} else if ((mActionFlag & ACTION_BOTTOM) > 0) {
-			mActionFlag &= ~ACTION_BOTTOM;
+		} else if (mActionFlag.has(ACTION_BOTTOM)) {
+			mActionFlag.remove(ACTION_BOTTOM);
 			onActionDisabled(BOTTOM);
 		}
 		// move
@@ -624,16 +652,29 @@ public class ReleaseActionLayout extends FrameLayout {
 	}
 
 	private void goHome(boolean animation) {
-		move(-mOffsetX, -mOffsetY, animation);
+		moveWithoutSpeed(-mOffsetX, -mOffsetY, animation);
 	}
 
 	public void onDragFinished() {
 		mOnReleaseActionListener.onReleaseAction(this);
-		mActionFlag = 0;
+		// reset
+		if (mActionFlag.has(ACTION_LEFT)) {
+			onActionDisabled(LEFT);
+		}
+		if (mActionFlag.has(ACTION_TOP)) {
+			onActionDisabled(TOP);
+		}
+		if (mActionFlag.has(ACTION_RIGHT)) {
+			onActionDisabled(RIGHT);
+		}
+		if (mActionFlag.has(ACTION_BOTTOM)) {
+			onActionDisabled(BOTTOM);
+		}
+		mActionFlag.reset();
 		goHome(true);
 	}
 
-	public int getActions() {
+	public Flag getActionFlag() {
 		return mActionFlag;
 	}
 
@@ -676,5 +717,57 @@ public class ReleaseActionLayout extends FrameLayout {
 
 	public OnReleaseActionListener getOnReleaseActionListener() {
 		return mOnReleaseActionListener;
+	}
+
+	public static class Flag {
+
+		public static final int NONE = 0;
+
+		private int mFlags;
+
+		public Flag() {
+			mFlags = NONE;
+		}
+
+		public Flag(int flags) {
+			mFlags = flags;
+		}
+
+		public Flag(Flag flag) {
+			mFlags = flag.get();
+		}
+
+		public int get() {
+			return mFlags;
+		}
+
+		public Flag reset() {
+			reset(NONE);
+			return this;
+		}
+
+		public Flag reset(int flags) {
+			mFlags = flags;
+			return this;
+		}
+
+		public Flag reset(Flag flag) {
+			mFlags = flag.get();
+			return this;
+		}
+
+		public Flag add(int flags) {
+			mFlags |= flags;
+			return this;
+		}
+
+		public Flag remove(int flags) {
+			mFlags &= ~flags;
+			return this;
+		}
+
+		public boolean has(int flags) {
+			return (mFlags & flags) > 0;
+		}
 	}
 }
