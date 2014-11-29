@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ReleaseAction Example</string>
+    <string name="action_settings">Settings</string>
+    
+    <string name="release_delete">Release to delete an item</string>
+    <string name="release_add">Release to add an item</string>
+    
+    <string name="release_previous">Go to previous section</string>
+    <string name="release_next">Go to next section</string>
+
+    <string name="release_bottom">Scroll to bottom</string>
+    <string name="release_top">Scroll to top</string>
+</resources>

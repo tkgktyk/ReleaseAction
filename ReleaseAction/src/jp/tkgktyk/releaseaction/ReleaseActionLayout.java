@@ -164,35 +164,9 @@ public class ReleaseActionLayout extends FrameLayout {
 				break;
 			}
 
-			boolean isBeingDraggedX = false;
-			boolean isBeingDraggedY = false;
-			final int x = (int) ev.getX(pointerIndex);
-			final int deltaX = x - mLastMotionX;
-			final int y = (int) ev.getY(pointerIndex);
-			final int deltaY = y - mLastMotionY;
-			if (mEnableTouchEventX && (Math.abs(deltaX) > mTouchSlop)) {
-				if (canChildScrollHorizontally(-deltaX)) {
-					getTargetView().getParent()
-							.requestDisallowInterceptTouchEvent(true);
-				} else {
-					isBeingDraggedX = true;
-				}
-			}
-			if (mEnableTouchEventY && (Math.abs(deltaY) > mTouchSlop)) {
-				if (canChildScrollVertically(-deltaY)) {
-					getTargetView().getParent()
-							.requestDisallowInterceptTouchEvent(true);
-				} else {
-					isBeingDraggedY = true;
-				}
-			}
-			if (isBeingDraggedX || isBeingDraggedY) {
-				final ViewParent parent = getParent();
-				if (parent != null) {
-					parent.requestDisallowInterceptTouchEvent(true);
-				}
-				locallyDrag = true;
-			}
+			final int deltaX = (int) ev.getX(pointerIndex) - mLastMotionX;
+			final int deltaY = (int) ev.getY(pointerIndex) - mLastMotionY;
+			locallyDrag = isBeingDragged(deltaX, deltaY);
 			break;
 		}
 
@@ -258,31 +232,7 @@ public class ReleaseActionLayout extends FrameLayout {
 			final int y = (int) ev.getY(activePointerIndex);
 			int deltaY = y - mLastMotionY;
 			if (!mIsBeingDragged) {
-				boolean isBeingDraggedX = false;
-				boolean isBeingDraggedY = false;
-				if (mEnableTouchEventX && (Math.abs(deltaX) > mTouchSlop)) {
-					if (canChildScrollHorizontally(-deltaX)) {
-						getTargetView().getParent()
-								.requestDisallowInterceptTouchEvent(true);
-					} else {
-						isBeingDraggedX = true;
-					}
-				}
-				if (mEnableTouchEventY && (Math.abs(deltaY) > mTouchSlop)) {
-					if (canChildScrollVertically(-deltaY)) {
-						getTargetView().getParent()
-								.requestDisallowInterceptTouchEvent(true);
-					} else {
-						isBeingDraggedY = true;
-					}
-				}
-				if (isBeingDraggedX || isBeingDraggedY) {
-					final ViewParent parent = getParent();
-					if (parent != null) {
-						parent.requestDisallowInterceptTouchEvent(true);
-					}
-					mIsBeingDragged = true;
-				}
+				mIsBeingDragged = isBeingDragged(deltaX, deltaY);
 			}
 			if (mIsBeingDragged) {
 				// Scroll to follow the motion event
@@ -321,6 +271,38 @@ public class ReleaseActionLayout extends FrameLayout {
 			break;
 		}
 		return true;
+	}
+
+	private boolean isBeingDragged(int deltaX, int deltaY) {
+		boolean dragged = false;
+		boolean draggedX = false;
+		boolean draggedY = false;
+		if (mEnableTouchEventX && (Math.abs(deltaX) > mTouchSlop)) {
+			if (canChildScrollHorizontally(-deltaX)) {
+				// disallow self intercept touch event for WebView
+				getTargetView().getParent().requestDisallowInterceptTouchEvent(
+						true);
+			} else {
+				draggedX = true;
+			}
+		}
+		if (mEnableTouchEventY && (Math.abs(deltaY) > mTouchSlop)) {
+			if (canChildScrollVertically(-deltaY)) {
+				// disallow self intercept touch event for WebView
+				getTargetView().getParent().requestDisallowInterceptTouchEvent(
+						true);
+			} else {
+				draggedY = true;
+			}
+		}
+		if (draggedX || draggedY) {
+			final ViewParent parent = getParent();
+			if (parent != null) {
+				parent.requestDisallowInterceptTouchEvent(true);
+			}
+			dragged = true;
+		}
+		return dragged;
 	}
 
 	private void onSecondaryPointerUp(MotionEvent ev) {
