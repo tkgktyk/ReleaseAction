@@ -1,9 +1,9 @@
 # Release Action
 * * *
-# Release-To-Action User Interface for Android
-This is an Android Layout Library provides Release-To-Action after pulling view.
+# Release Action User Interface for Android
+This is an Android Layout Library provides Release Action after pulling view.
 User interface is similar to [chrisbanes/Android-PullToRefresh](https://github.com/chrisbanes/Android-PullToRefresh).
-The mechanism is similar to [SwipeRefreshLayout](https://developer.android.com/reference/android/support/v4/widget/SwipeRefreshLayout.html).
+The mechanism to judge scroller is similar to [SwipeRefreshLayout](https://developer.android.com/reference/android/support/v4/widget/SwipeRefreshLayout.html).
 And the implementation is based on [FlyingLayout](https://github.com/tkgktyk/FlyingLayout).
 
 You just wrap a target View or Layout in **ReleaseActionLayout** and setup listeners and indicator views.
@@ -14,11 +14,11 @@ Then it'll fire actions when you release your finger after pulling the target vi
  	* four orthogonal directions and their combinations (diagonal).
  * Action is cancelable unlike SwipeRefreshLayout.
  * Customizable indicator view.
- 	* Minimum indicator views are prepared by **SimpleReleaseActionLayout**.
+ 	* **SimpleReleaseActionLayout** prepares minimum indicator views.
  * Only one change your layout hierarchy: wraps a target View in **ReleaseActionLayout**.
  * Works with views having correctly **View#canScrollHorizontally/Vertically**.
 	* Or make custom layout overrides **ReleaseActionLayout#canChildScrollHorizontally/Vertically**.
- * Example app includes:
+ * Example application includes:
 	* **ListView**
 	* **ViewPager**
 	* **WebView**
