@@ -31,5 +31,6 @@ Repository at <https://github.com/tkgktyk/ReleaseAction>.
 ## Introduction
 See [Quick Start Guide](https://github.com/tkgktyk/ReleaseAction/wiki/Quick-Start-Guide).
 
-Get the example application in this repository on Google Play;:
+Get the example application in this repository on Google Play:
+
 [![Get it on Google Play](http://www.android.com/images/brand/get_it_on_play_logo_small.png)](https://play.google.com/store/apps/details?id=jp.tkgktyk.releaseactionexample2)
