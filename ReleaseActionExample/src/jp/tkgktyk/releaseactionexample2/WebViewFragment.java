@@ -1,4 +1,4 @@
-package jp.tkgktyk.releaseactionexample;
+package jp.tkgktyk.releaseactionexample2;
 
 import java.util.ArrayList;
 import java.util.List;

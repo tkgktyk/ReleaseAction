@@ -1,4 +1,4 @@
-package jp.tkgktyk.releaseactionexample;
+package jp.tkgktyk.releaseactionexample2;
 
 import jp.tkgktyk.releaseaction.ReleaseActionLayout;
 import jp.tkgktyk.releaseaction.ReleaseActionLayout.Flag;

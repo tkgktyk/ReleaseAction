@@ -1,4 +1,4 @@
-package jp.tkgktyk.releaseactionexample;
+package jp.tkgktyk.releaseactionexample2;
 
 import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
