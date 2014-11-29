@@ -1,6 +1,6 @@
 # Release Action
 * * *
-# Release to Action User Interface for Android
+# Release-To-Action User Interface for Android
 This is an Android Layout Library provides Release-To-Action after pulling view.
 User interface is similar to [chrisbanes/Android-PullToRefresh](https://github.com/chrisbanes/Android-PullToRefresh).
 The mechanism is similar to [SwipeRefreshLayout](https://developer.android.com/reference/android/support/v4/widget/SwipeRefreshLayout.html).
@@ -14,15 +14,18 @@ Then it'll fire actions when you release your finger after pulling the target vi
  	* four orthogonal directions and their combinations (diagonal).
  * Action is cancelable unlike SwipeRefreshLayout.
  * Customizable indicator view.
- 	* Minimum indicator view is prepared by **SimpleReleaseActionLayout**.
- * Changes your layout hierarchy: only wraps a target View in **ReleaseActionLayout**.
+ 	* Minimum indicator views are prepared by **SimpleReleaseActionLayout**.
+ * Only one change your layout hierarchy: wraps a target View in **ReleaseActionLayout**.
  * Works with views having correctly **View#canScrollHorizontally/Vertically**.
+	* Or make custom layout overrides **ReleaseActionLayout#canChildScrollHorizontally/Vertically**.
  * Example app includes:
 	* **ListView**
 	* **ViewPager**
 	* **WebView**
- * **Strange Features**:
+ * Strange Features:
  	* When one direction indicator appears by swipe, you can also use another direction-actions by continuous swiping like a gesture.
  	* and more...
 
-Repository at https://github.com/tkgktyk/ReleaseAction.
+Repository at <https://github.com/tkgktyk/ReleaseAction>.
+
+## Introduction
