@@ -50,7 +50,7 @@ public class SimpleReleaseActionLayout extends ReleaseActionLayout {
 				ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL);
 		tv.setLayoutParams(lp);
 		tv.setCompoundDrawablesWithIntrinsicBounds(0, drawable, 0, 0);
-		tv.setText(R.string.keep_on_pulling);
+		tv.setText(R.string.keep_pulling);
 		setTopView(tv);
 	}
 
@@ -75,7 +75,7 @@ public class SimpleReleaseActionLayout extends ReleaseActionLayout {
 				ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL);
 		tv.setLayoutParams(lp);
 		tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, drawable);
-		tv.setText(R.string.keep_on_pulling);
+		tv.setText(R.string.keep_pulling);
 		setBottomView(tv);
 	}
 
@@ -110,7 +110,7 @@ public class SimpleReleaseActionLayout extends ReleaseActionLayout {
 				break;
 			case ACTION_TOP:
 			case ACTION_BOTTOM:
-				tv.setText(R.string.keep_on_pulling);
+				tv.setText(R.string.keep_pulling);
 				break;
 			}
 		}
