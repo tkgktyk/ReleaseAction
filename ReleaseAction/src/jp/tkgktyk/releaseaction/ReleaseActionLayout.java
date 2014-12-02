@@ -274,35 +274,39 @@ public class ReleaseActionLayout extends FrameLayout {
 	}
 
 	private boolean isBeingDragged(int deltaX, int deltaY) {
-		boolean dragged = false;
+		boolean disable = false;
 		boolean draggedX = false;
 		boolean draggedY = false;
 		if (mEnableTouchEventX && (Math.abs(deltaX) > mTouchSlop)) {
 			if (canChildScrollHorizontally(-deltaX)) {
-				// disallow self intercept touch event for WebView
-				getTargetView().getParent().requestDisallowInterceptTouchEvent(
-						true);
+				disable = true;
 			} else {
 				draggedX = true;
 			}
 		}
 		if (mEnableTouchEventY && (Math.abs(deltaY) > mTouchSlop)) {
 			if (canChildScrollVertically(-deltaY)) {
-				// disallow self intercept touch event for WebView
-				getTargetView().getParent().requestDisallowInterceptTouchEvent(
-						true);
+				disable = true;
 			} else {
 				draggedY = true;
 			}
 		}
-		if (draggedX || draggedY) {
-			final ViewParent parent = getParent();
-			if (parent != null) {
-				parent.requestDisallowInterceptTouchEvent(true);
+		if (disable) {
+			// disallow self intercept touch event for WebView
+			getTargetView().getParent()
+					.requestDisallowInterceptTouchEvent(true);
+			return false;
+		} else {
+			boolean dragged = false;
+			if (draggedX || draggedY) {
+				final ViewParent parent = getParent();
+				if (parent != null) {
+					parent.requestDisallowInterceptTouchEvent(true);
+				}
+				dragged = true;
 			}
-			dragged = true;
+			return dragged;
 		}
-		return dragged;
 	}
 
 	private void onSecondaryPointerUp(MotionEvent ev) {
