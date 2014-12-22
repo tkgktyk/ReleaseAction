@@ -236,7 +236,7 @@ public class ReleaseActionLayout extends FrameLayout {
 			}
 			if (mIsBeingDragged) {
 				// Scroll to follow the motion event
-				move(deltaX, deltaY);
+				move(deltaX, deltaY, false);
 				mLastMotionX = x;
 				mLastMotionY = y;
 			}
@@ -499,10 +499,6 @@ public class ReleaseActionLayout extends FrameLayout {
 						mChildRect.bottom);
 			}
 		}
-	}
-
-	private void move(int deltaX, int deltaY) {
-		move(deltaX, deltaY, false);
 	}
 
 	private boolean valid(int location) {
